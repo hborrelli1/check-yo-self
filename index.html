@@ -3,40 +3,72 @@
   <head>
     <meta charset="utf-8">
     <title>Check Yo' Self</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,800&display=swap" rel="stylesheet">
   </head>
   <body>
     <header>
       <h1>Check <span>Yo</span> Self</h1>
-      <form class="search-bx" action="#" method="#">
-        <label for="search">Search</label>
-        <input type="search" name="search" value="Search">
+      <form class="search-box" action="#" method="#">
+        <img class="search-icon" src="./assets/search.svg" alt="Search Input">
+        <input class="search-input" type="search" name="search" value="" placeholder="Search">
       </form>
     </header>
     <main>
-      <section class="create-task-column">
+      <section class="create-task-column column">
         <form class="create-task-list" action="#" method="#">
           <label for="task-title">Task Title</label>
           <input type="text" name="task-title" value="">
           <label for="task-item">Task Item</label>
-          <input type="text" name="task-item" value="">
-          <button type="button" name="make-task-list">Make Task List</button>
-          <button type="button" name="clear-all">Clear All</button>
+          <div class="button-wrap">
+            <input type="text" name="task-item" value="">
+            <img class="plus-icon btn" src="./assets/add-24px.svg" alt="Add Task Item">
+          </div>
+          <button class="btn" type="button" name="make-task-list">Make Task List</button>
+          <button class="btn" type="button" name="clear-all">Clear All</button>
         </form>
-        <button type="button" name="filter-urgency">Filter by Urgency</button>
+        <button class="urgency-button btn" type="button" name="filter-urgency">Filter by Urgency</button>
       </section>
-      <section class="task-list-column">
+      <section class="task-list-column column">
         <section class="task-box">
           <h3>Task Title</h3>
           <ul class="task-list">
-            <li>
+            <li class="task-list-item done">
+              <input id="0" type="checkbox" name="0" value="">
+              <label for="0">Don't ever play yourself.</label>
+            </li>
+            <li class="task-list-item">
+              <input id="1" type="checkbox" name="1" value="">
+              <label for="1">Every chanve I get, I water the plants.</label>
+            </li>
+            <li class="task-list-item">
+              <input id="2" type="checkbox" name="2" value="">
+              <label for="2">Lion! Cloth talk.</label>
+            </li>
+          </ul>
+          <footer>
+            <div class="urgent">
+              <img src="./assets/urgent.svg" alt="Urgent">
+              <p>Urgent</p>
+            </div>
+            <div class="delete">
+              <img src="./assets/delete.svg" alt="Delete Task List">
+              <p>Delete</p>
+            </div>
+          </footer>
+        </section>
+        <section class="task-box urgent">
+          <h3>Task Title</h3>
+          <ul class="task-list">
+            <li class="task-list-item done">
               <input type="checkbox" name="0" value="">
               <label for="0">Don't ever play yourself.</label>
             </li>
-            <li>
+            <li class="task-list-item">
               <input type="checkbox" name="1" value="">
               <label for="1">Every chanve I get, I water the plants.</label>
             </li>
-            <li>
+            <li class="task-list-item">
               <input type="checkbox" name="2" value="">
               <label for="2">Lion! Cloth talk.</label>
             </li>

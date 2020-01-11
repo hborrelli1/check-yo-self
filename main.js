@@ -8,7 +8,9 @@ var taskDescription = document.getElementById('taskDescription');
 var currentTaskList = new ToDoList();
 
 createTaskColumn.addEventListener('click', function() {
-  addTask(event);
+  if (taskDescription.value != "") {
+    addTask(event);
+  }
   removeTask(event);
   createTaskList();
 });

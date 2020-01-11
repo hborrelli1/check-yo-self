@@ -42,6 +42,11 @@ h1 span {
   cursor:pointer;
 }
 
+input {
+  padding:0px 10px;
+  font-size:16px;
+}
+
 .search-box {
   position:relative;
 }
@@ -111,12 +116,25 @@ main {
   border-radius:4px;
 }
 
+.tasks-to-add .task {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom:10px;
+}
+
+.tasks-to-add .task img {
+  width:25px;
+  margin-right:10px;
+}
+
 .button-wrap {
   position:relative;
 }
 
 .button-wrap input {
   width:100%;
+  padding-right:60px;
 }
 
 .button-wrap .plus-icon {
@@ -163,6 +181,7 @@ main {
 
 .task-box .task-list .task-list-item.done {
   color:#3c6577;
+  font-style:italic;
 }
 
 .task-box footer {

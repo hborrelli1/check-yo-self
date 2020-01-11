@@ -8,7 +8,7 @@
   </head>
   <body>
     <header>
-      <h1>Check <span>Yo</span> Self</h1>
+      <h1>Check <span>Yo'</span> Self</h1>
       <form class="search-box" action="#" method="#">
         <img class="search-icon" src="./assets/search.svg" alt="Search Input">
         <input class="search-input" type="search" name="search" value="" placeholder="Search">
@@ -18,13 +18,16 @@
       <section class="create-task-column column">
         <form class="create-task-list" action="#" method="#">
           <label for="task-title">Task Title</label>
-          <input type="text" name="task-title" value="">
+          <input id="taskListTitle" type="text" name="task-title" value="">
+          <div class="tasks-to-add">
+
+          </div>
           <label for="task-item">Task Item</label>
           <div class="button-wrap">
-            <input type="text" name="task-item" value="">
-            <img class="plus-icon btn" src="./assets/add-24px.svg" alt="Add Task Item">
+            <input id="taskDescription" type="text" name="task-item" value="">
+            <img id="createTask" class="plus-icon btn" src="./assets/add-24px.svg" alt="Add Task Item">
           </div>
-          <button class="btn" type="button" name="make-task-list">Make Task List</button>
+          <button id="createTaskList" class="btn" type="button" name="make-task-list">Make Task List</button>
           <button class="btn" type="button" name="clear-all">Clear All</button>
         </form>
         <button class="urgency-button btn" type="button" name="filter-urgency">Filter by Urgency</button>
@@ -87,4 +90,7 @@
       </section>
     </main>
   </body>
+  <script type="text/javascript" src="./task.js"></script>
+  <script type="text/javascript" src="./todo-list.js"></script>
+  <script type="text/javascript" src="./main.js"></script>
 </html>

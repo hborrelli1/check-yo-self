@@ -19,16 +19,14 @@
         <form class="create-task-list" action="#" method="#">
           <label for="task-title">Task Title</label>
           <input id="taskListTitle" type="text" name="task-title" value="">
-          <div class="tasks-to-add">
-
-          </div>
+          <div class="tasks-to-add"></div>
           <label for="task-item">Task Item</label>
           <div class="button-wrap">
             <input id="taskDescription" type="text" name="task-item" value="">
             <img id="createTask" class="plus-icon btn" src="./assets/add-24px.svg" alt="Add Task Item">
           </div>
-          <button id="createTaskList" class="btn" type="button" name="make-task-list">Make Task List</button>
-          <button class="btn" type="button" name="clear-all">Clear All</button>
+          <button id="createTaskList" class="btn" type="button" name="make-task-list" disabled>Make Task List</button>
+          <button class="btn" type="button" name="clear-all" disabled>Clear All</button>
         </form>
         <button class="urgency-button btn" type="button" name="filter-urgency">Filter by Urgency</button>
       </section>

@@ -42,6 +42,11 @@ h1 span {
   cursor:pointer;
 }
 
+button:disabled {
+  cursor:no-drop !important;
+  opacity:.7;
+}
+
 input {
   padding:0px 10px;
   font-size:16px;

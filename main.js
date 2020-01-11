@@ -86,7 +86,7 @@ function addTaskListToDom() {
       ${checklistHTML}
     </ul>
     <footer>
-      <div class="urgent">
+      <div class="js-urgent">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
       </div>
@@ -139,9 +139,22 @@ function clearAllFields() {
 function toggleListUrgent(event) {
   var urgentButtonTarget = event.target.classList.contains('js-urgent');
   if (urgentButtonTarget) {
-    event.target.closest('.task-box').classList.add('js-urgent');
+    // event.target.closest('.task-box').classList.add('js-urgent');
+    var clickedOnTaskList = event.target.closest('.task-box');
+    var taskBoxId = clickedOnTaskList.id;
+    var listToUpdate = pullListFromLocalStorage(taskBoxId);
+    updateListUrgency(listToUpdate);
   }
 }
+
+function pullListFromLocalStorage(taskBoxId) {
+  return JSON.parse(window.localStorage.getItem(taskBoxId));
+}
+
+function updateListUrgency(listToUpdate) {
+  // listToU
+}
+
 function updateTaskIdsList() {
   allTaskListIds.push(currentTaskList.id);
   window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));

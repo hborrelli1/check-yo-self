@@ -2,14 +2,15 @@
 
 class ToDoList {
   constructor() {
-    this.id = 1;
-    this.title = '';
+    this.id = Date.now();
+    this.title = null;
     this.urgent = false;
     this.tasks = []; // Should be an array of objects
   }
 
   saveToStorage() {
     // Save task list to localStorage
+    window.localStorage.setItem(this.id, JSON.stringify(this));
   }
 
   deleteFromStorage() {

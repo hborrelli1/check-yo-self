@@ -24,7 +24,7 @@ class ToDoList {
     // } else {
     //   this.urgent = false;
     // }
-    this.urgent === false ? this.urgent = true : this.urgent = false;
+    this.urgent === false ? this.urgent = true : this.urgent = false
   }
 
   updateTask() {

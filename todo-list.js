@@ -19,6 +19,7 @@ class ToDoList {
 
   updateToDo() {
     // should update the to-do’s title and urgency
+    this.urgent = true;
   }
 
   updateTask() {

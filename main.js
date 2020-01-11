@@ -18,6 +18,10 @@ createTaskColumn.addEventListener('click', function() {
   clearAllFields()
 });
 
+taskListColumn.addEventListener('click', function() {
+  toggleListUrgent();
+})
+
 document.addEventListener('keyup', function() {
   validateMakeTaskListForm();
   // Add clear button validation here.
@@ -116,5 +120,12 @@ function clearAllFields() {
     tasksToAddList.innerHTML = '';
     currentTaskList.tasks = [];
     validateMakeTaskListForm();
+  }
+}
+
+function toggleListUrgent() {
+  var urgentButtonTarget = event.target.classList.contains('urgent');
+  if ((urgentButtonTarget) && (!event.target.classList.contains('js-urgent'))) {
+    event.target.closest('.task-box').classList.add('js-is-urgent');
   }
 }

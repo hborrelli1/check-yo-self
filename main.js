@@ -7,6 +7,7 @@ var createTaskButton = document.getElementById('#createTask');
 var createTaskListButton = document.getElementById('createTaskList');
 var clearAllButton = document.getElementById('clearAllButton');
 var taskDescription = document.getElementById('taskDescription');
+var allTaskListIds = [];
 var currentTaskList = new ToDoList();
 
 createTaskColumn.addEventListener('click', function() {
@@ -19,7 +20,7 @@ createTaskColumn.addEventListener('click', function() {
 });
 
 taskListColumn.addEventListener('click', function() {
-  toggleListUrgent();
+  toggleListUrgent(event);
 })
 
 document.addEventListener('keyup', function() {
@@ -27,6 +28,16 @@ document.addEventListener('keyup', function() {
   // Add clear button validation here.
 });
 
+window.addEventListener('load', pullSavedTaskListsFromLocalStorage);
+
+function pullSavedTaskListsFromLocalStorage() {
+  var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
+  if (taskListsInLocalStorage === null) {
+    allTaskListIds = [];
+  } else {
+    allTaskListIds = taskListsInLocalStorage;
+  }
+}
 
 function addTask(event) {
   if (event.target.id === 'createTask') {
@@ -51,6 +62,8 @@ function removeTask() {
 function createTaskList() {
   if (event.target.id === 'createTaskList') {
     currentTaskList.title = taskListTitle.value;
+    // allTaskListIds.push(currentTaskList.id);
+    updateTaskIdsList();
     currentTaskList.saveToStorage();
     validateMakeTaskListForm();
     addTaskListToDom();
@@ -67,7 +80,7 @@ function addTaskListToDom() {
     </li>`;
   }
 
-  var newTaskList = `<section class="task-box">
+  var newTaskList = `<section id="${currentTaskList.id}" class="task-box">
     <h3>${currentTaskList.title}</h3>
     <ul class="task-list">
       ${checklistHTML}
@@ -123,9 +136,13 @@ function clearAllFields() {
   }
 }
 
-function toggleListUrgent() {
-  var urgentButtonTarget = event.target.classList.contains('urgent');
-  if ((urgentButtonTarget) && (!event.target.classList.contains('js-urgent'))) {
-    event.target.closest('.task-box').classList.add('js-is-urgent');
+function toggleListUrgent(event) {
+  var urgentButtonTarget = event.target.classList.contains('js-urgent');
+  if (urgentButtonTarget) {
+    event.target.closest('.task-box').classList.add('js-urgent');
   }
+}
+function updateTaskIdsList() {
+  allTaskListIds.push(currentTaskList.id);
+  window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
 }

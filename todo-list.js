@@ -19,7 +19,12 @@ class ToDoList {
 
   updateToDo() {
     // should update the to-do’s title and urgency
-    this.urgent = true;
+    // if (this.urgent === false) {
+    //   this.urgent = true;
+    // } else {
+    //   this.urgent = false;
+    // }
+    this.urgent === false ? this.urgent = true : this.urgent = false;
   }
 
   updateTask() {

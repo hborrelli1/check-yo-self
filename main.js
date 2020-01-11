@@ -5,6 +5,7 @@ var tasksList = document.querySelector('.tasks-list');
 var tasksToAddList = document.querySelector('.tasks-to-add');
 var createTaskButton = document.getElementById('#createTask');
 var createTaskListButton = document.getElementById('createTaskList');
+var clearAllButton = document.getElementById('clearAllButton');
 var taskDescription = document.getElementById('taskDescription');
 var currentTaskList = new ToDoList();
 
@@ -14,9 +15,13 @@ createTaskColumn.addEventListener('click', function() {
   }
   removeTask(event);
   createTaskList();
+  clearAllFields()
 });
 
-document.addEventListener('keyup', validateMakeTaskListForm);
+document.addEventListener('keyup', function() {
+  validateMakeTaskListForm();
+  // Add clear button validation here.
+});
 
 
 function addTask(event) {
@@ -85,12 +90,31 @@ function resetMakeTaskList() {
 }
 
 function validateMakeTaskListForm() {
-  // debugger
-  var taskListTitleEmpty = taskListTitle.value;
-  var taskListEmpty = tasksToAddList.firstChild = null;
-  if ((taskListTitleEmpty != '') && (currentTaskList.tasks.length > 0)) {
+  validateMakeTaskListButton();
+  validateClearAllButton();
+}
+
+function validateMakeTaskListButton() {
+  if ((taskListTitle.value != '') && (currentTaskList.tasks.length > 0)) {
     createTaskListButton.removeAttribute('disabled');
   } else {
     createTaskListButton.setAttribute('disabled', '');
+  }
+}
+
+function validateClearAllButton() {
+  if ((taskListTitle.value != '') || (currentTaskList.tasks.length > 0)) {
+    clearAllButton.removeAttribute('disabled');
+  } else {
+    clearAllButton.setAttribute('disabled', '');
+  }
+}
+
+function clearAllFields() {
+  if (event.target.id === 'clearAllButton') {
+    taskListTitle.value = '';
+    tasksToAddList.innerHTML = '';
+    currentTaskList.tasks = [];
+    validateMakeTaskListForm();
   }
 }

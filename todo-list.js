@@ -15,10 +15,12 @@ class ToDoList {
 
   deleteFromStorage() {
     // Delete task list from localStorage
+    // Delete task from arrays of tasks
   }
 
   updateToDo() {
     // should update the to-do’s title and urgency
+    this.urgent === false ? this.urgent = true : this.urgent = false;
   }
 
   updateTask() {

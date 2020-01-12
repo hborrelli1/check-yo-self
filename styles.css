@@ -96,7 +96,7 @@ main {
 }
 
 .task-list-column {
-  background-color:#f2f6f7;
+  /* background-color:#f2f6f7; */
   width:75%;
   margin-left:25%;
 }
@@ -155,10 +155,6 @@ main {
   border-bottom-right-radius: 4px;
 }
 
-.js-is-urgent {
-  background-color:#ef4a23;
-}
-
 /* Task List styles */
 .task-box {
   color:#1f1f3d;
@@ -197,23 +193,28 @@ main {
   justify-content: space-between;
 }
 
-.task-box footer .urgent,
+.task-box footer .js-urgent,
 .task-box footer .delete {
   width:10%;
   text-align: center;
 }
 
-.task-box footer .urgent img,
+.task-box footer .js-urgent > *,
+.task-box footer .delete > * {
+  pointer-events: none;
+}
+
+.task-box footer .js-urgent img,
 .task-box footer .delete img {
   height:40px;
 }
 
-.task-box.urgent {
+.task-box.js-urgent {
   background-color:#ffe89d;
   border-color:#ffc30c;
 }
 
-.task-box.urgent footer .urgent {
+.task-box.js-urgent footer .js-urgent {
   color:#b23a25;
 }
 

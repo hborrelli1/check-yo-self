@@ -101,6 +101,13 @@ main {
   margin-left:25%;
 }
 
+.no-task-lists {
+  color: #93979a;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
+}
+
 .create-task-list {
   display: flex;
   flex-direction:column;

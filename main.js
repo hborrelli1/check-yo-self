@@ -28,7 +28,10 @@ document.addEventListener('keyup', function() {
   // Add clear button validation here.
 });
 
-window.addEventListener('load', pullSavedTaskListsFromLocalStorage);
+window.addEventListener('load', function() {
+  pullSavedTaskListsFromLocalStorage();
+  populateTaskListsFromLocalStorage();
+});
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
@@ -37,6 +40,45 @@ function pullSavedTaskListsFromLocalStorage() {
   } else {
     allTaskListIds = taskListsInLocalStorage;
   }
+}
+
+function populateTaskListsFromLocalStorage() {
+  for (var i = 0; i < allTaskListIds.length; i++) {
+    var listFromLocalStorage = JSON.parse(window.localStorage.getItem(allTaskListIds[i]));
+    loadTaskListsFromLocalStorage(listFromLocalStorage);
+  }
+}
+
+function loadTaskListsFromLocalStorage(listFromLocalStorage) {
+  var checklistHTML = '';
+
+  for (var i = 0; i < listFromLocalStorage.tasks.length; i++) {
+    checklistHTML += `<li class="task-list-item">
+      <input id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="">
+      <label for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
+    </li>`;
+  }
+
+  var isUrgent = null;
+  listFromLocalStorage.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+
+  var newTaskList = `<section id="${listFromLocalStorage.id}" class="task-box ${isUrgent}">
+    <h3>${listFromLocalStorage.title}</h3>
+    <ul class="task-list">
+      ${checklistHTML}
+    </ul>
+    <footer>
+      <div class="js-urgent">
+        <img src="./assets/urgent.svg" alt="Urgent">
+        <p>Urgent</p>
+      </div>
+      <div class="delete">
+        <img src="./assets/delete.svg" alt="Delete Task List">
+        <p>Delete</p>
+      </div>
+    </footer>
+  </section>`;
+  taskListColumn.insertAdjacentHTML('beforeend', newTaskList);
 }
 
 function addTask(event) {
@@ -120,7 +162,7 @@ function validateMakeTaskListButton() {
 }
 
 function validateClearAllButton() {
-  if ((taskListTitle.value != '') || (currentTaskList.tasks.length > 0)) {
+  if ((taskListTitle.value != '') || (taskDescription.value != '') || (currentTaskList.tasks.length > 0)) {
     clearAllButton.removeAttribute('disabled');
   } else {
     clearAllButton.setAttribute('disabled', '');
@@ -131,6 +173,7 @@ function clearAllFields() {
   if (event.target.id === 'clearAllButton') {
     taskListTitle.value = '';
     tasksToAddList.innerHTML = '';
+    taskDescription.value = '';
     currentTaskList.tasks = [];
     validateMakeTaskListForm();
   }
@@ -143,7 +186,8 @@ function toggleListUrgent(event) {
     var clickedOnTaskList = event.target.closest('.task-box');
     var taskBoxId = clickedOnTaskList.id;
     var listToUpdate = pullListFromLocalStorage(taskBoxId);
-    updateListUrgency(listToUpdate);
+    updateListUrgency(listToUpdate, clickedOnTaskList);
+
   }
 }
 
@@ -151,11 +195,26 @@ function pullListFromLocalStorage(taskBoxId) {
   return JSON.parse(window.localStorage.getItem(taskBoxId));
 }
 
-function updateListUrgency(listToUpdate) {
-  // listToU
+function updateListUrgency(listToUpdate, clickedOnTaskList) {
+  // Object assign to re-add methods
+  var listInstance = new ToDoList();
+  listInstance = Object.assign(listInstance, listToUpdate);
+
+  // Update Urgency
+  listInstance.updateToDo();
+
+  // Update Dom for urgent styling
+  updateUrgentStyling(listInstance, clickedOnTaskList);
+
+  // Push back to
+  listInstance.saveToStorage();
 }
 
 function updateTaskIdsList() {
   allTaskListIds.push(currentTaskList.id);
   window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+}
+
+function updateUrgentStyling(listInstance, clickedOnTaskList) {
+  listInstance.urgent === true ? clickedOnTaskList.classList.add('js-urgent') : clickedOnTaskList.classList.remove('js-urgent');
 }

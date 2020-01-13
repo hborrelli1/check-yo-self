@@ -10,16 +10,32 @@ class ToDoList {
 
   saveToStorage() {
     // Save task list to localStorage
+    listOfTasks.push(this);
+    window.localStorage.setItem('listOfTasks', JSON.stringify(listOfTasks));
+
+    // Remove this line once refactoring for list of array objects is complete.
     window.localStorage.setItem(this.id, JSON.stringify(this));
   }
 
+  // deleteFromStorage(cardFromLocalStorage, listOfIdsFromLocalStorage, allTaskListIds) {
+  //   // Delete task list from localStorage
+  //   window.localStorage.removeItem(this.id);
+  //   // Delete task from arrays of tasks
+  //   listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
+  //   allTaskListIds = listOfIdsFromLocalStorage;
+  //   window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+  //   if (allTaskListIds.length === 0) {
+  //     displayNoListsInDom();
+  //   }
+  // }
+
   deleteFromStorage(cardFromLocalStorage, listOfIdsFromLocalStorage, allTaskListIds) {
     // Delete task list from localStorage
-    window.localStorage.removeItem(this.id);
-    // Delete task from arrays of tasks
-    listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
+    // window.localStorage.removeItem(this.id);
+    listOfTasks.splice(listOfTasks.indexOf(this), 1);
+    window.localStorage.setItem('listOfTasks', listOfTasks);
     allTaskListIds = listOfIdsFromLocalStorage;
-    window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+    // window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
     if (allTaskListIds.length === 0) {
       displayNoListsInDom();
     }

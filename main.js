@@ -8,6 +8,7 @@ var createTaskListButton = document.getElementById('createTaskList');
 var clearAllButton = document.getElementById('clearAllButton');
 var taskDescription = document.getElementById('taskDescription');
 var allTaskListIds = [];
+var listOfTasks = [];
 var currentTaskList = new ToDoList();
 
 createTaskColumn.addEventListener('click', function() {
@@ -36,13 +37,36 @@ window.addEventListener('load', function() {
 
 });
 
+// function pullSavedTaskListsFromLocalStorage() {
+//   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
+//   if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
+//     allTaskListIds = [];
+//     displayNoListsInDom();
+//   } else {
+//     allTaskListIds = taskListsInLocalStorage;
+//     populateTaskListsFromLocalStorage();
+//   }
+// }
+
 function pullSavedTaskListsFromLocalStorage() {
-  var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
+  var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTasks'));
+  var toDoObjects = taskListsInLocalStorage.map(function(taskList) {
+    return Object.assign(new ToDoList(), taskList);
+    console.log(taskList);
+  })
+  // for (var i = 0; i < taskListsInLocalStorage; i++) {
+  //   taskListsInLocalStorage[i] = Object.assign(new ToDoList(), taskListsInLocalStorage[i]);
+  //   console.log(taskListsInLocalStorage[i]);
+  // }
+
+  // taskListsInLocalStorage = toDoObjects;
+  console.log(toDoObjects);
+
   if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
-    allTaskListIds = [];
+    listOfTasks = [];
     displayNoListsInDom();
   } else {
-    allTaskListIds = taskListsInLocalStorage;
+    listOfTasks = taskListsInLocalStorage;
     populateTaskListsFromLocalStorage();
   }
 }
@@ -51,9 +75,16 @@ function displayNoListsInDom() {
   taskListColumn.querySelector('.no-task-lists').classList.add('active');
 }
 
+// function populateTaskListsFromLocalStorage() {
+//   for (var i = 0; i < allTaskListIds.length; i++) {
+//     var listFromLocalStorage = JSON.parse(window.localStorage.getItem(allTaskListIds[i]));
+//     loadTaskListsFromLocalStorage(listFromLocalStorage);
+//   }
+// }
+
 function populateTaskListsFromLocalStorage() {
-  for (var i = 0; i < allTaskListIds.length; i++) {
-    var listFromLocalStorage = JSON.parse(window.localStorage.getItem(allTaskListIds[i]));
+  for (var i = 0; i < listOfTasks.length; i++) {
+    var listFromLocalStorage = JSON.parse(window.localStorage.getItem(listOfTasks[i]));
     loadTaskListsFromLocalStorage(listFromLocalStorage);
   }
 }

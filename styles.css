@@ -194,7 +194,7 @@ main {
 
 .task-box footer {
   color:#3c6577;
-  padding-top: 10px;
+  padding-top: 20px;
   border-top: 1px solid #c7d3d8;
   display: flex;
   justify-content: space-between;
@@ -204,6 +204,18 @@ main {
 .task-box footer .delete {
   width:10%;
   text-align: center;
+  background-color:transparent;
+  border:0;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  cursor:pointer;
+}
+
+.task-box footer .js-urgent p,
+.task-box footer .delete p {
+  color:#3c6577;
+  font-size:16px;
 }
 
 .task-box footer .js-urgent > *,
@@ -214,6 +226,7 @@ main {
 .task-box footer .js-urgent img,
 .task-box footer .delete img {
   height:40px;
+  margin-bottom:5px;
 }
 
 .task-box.js-urgent {

@@ -26,10 +26,7 @@ class ToDoList {
   updateTask(taskId, taskListId) {
     // Should update a task's content and if it has been completed
     var taskToMarkChecked = this.tasks.find(task => task.id == taskId);
-    // console.log(taskToMarkChecked);
     taskToMarkChecked.checked === true ? taskToMarkChecked.checked = false : taskToMarkChecked.checked = true;
-    // console.log(taskToMarkChecked);
-    // console.log(taskToEdit);
     window.localStorage.setItem(taskListId, JSON.stringify(this));
   }
 }

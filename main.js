@@ -77,14 +77,14 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
       ${checklistHTML}
     </ul>
     <footer>
-      <div class="js-urgent">
+      <button class="js-urgent">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
-      </div>
-      <div class="delete">
+      </button>
+      <button class="delete" disabled>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
-      </div>
+      </button>
     </footer>
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
@@ -142,14 +142,14 @@ function addTaskListToDom() {
       ${checklistHTML}
     </ul>
     <footer>
-      <div class="js-urgent">
+      <button class="js-urgent">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
-      </div>
-      <div class="delete">
+      </button>
+      <button class="delete" disabled>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
-      </div>
+      </button>
     </footer>
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);

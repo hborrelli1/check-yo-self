@@ -1,7 +1,7 @@
 # CHECK YO' SELF
 
 Check Yo' Self is a checklist application.  
-[Project Details](https://frontend.turing.io/projects/module-1/check-yo-self-group.html)
+[Project Details](https://frontend.turing.io/projects/module-1/check-yo-self-solo.html)
 
 ## Specification
 Now that you’ve got the main foundations down to build out a front-end application, it’s time to prove to yourself that you own those skills! You’re going to be building a checklist application called Check Yo'Self!

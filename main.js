@@ -119,14 +119,11 @@ function removeTask() {
 function createTaskList() {
   if (event.target.id === 'createTaskList') {
     currentTaskList.title = taskListTitle.value;
-    // allTaskListIds.push(currentTaskList.id);
     updateTaskIdsList();
     currentTaskList.saveToStorage();
-    validateMakeTaskListForm();
-    // debugger;
     removeNoListsMessage();
-    // debugger;
     addTaskListToDom();
+    validateMakeTaskListForm();
   }
 }
 
@@ -274,18 +271,10 @@ function deleteTaskCard(event) {
     var cardToDelete = event.target.closest('.task-box');
     var cardFromLocalStorage = JSON.parse(window.localStorage.getItem(cardToDelete.id));
     var listOfIdsFromLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
-
-    //
-    // Refactor this function to use the deleteFromStorage method on the todo-list Class.
-    //
-
-    window.localStorage.removeItem(cardFromLocalStorage.id);
-    listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
-    allTaskListIds = listOfIdsFromLocalStorage;
-    window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
-    if (allTaskListIds.length === 0) {
-      displayNoListsInDom();
-    }
+    cardFromLocalStorage = Object.assign(new ToDoList(), cardFromLocalStorage);
+    cardFromLocalStorage.deleteFromStorage(cardFromLocalStorage, listOfIdsFromLocalStorage, allTaskListIds);
     cardToDelete.remove();
   }
 }
+
+// function

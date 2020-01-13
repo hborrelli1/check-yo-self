@@ -273,12 +273,6 @@ function deleteTaskCard(event) {
     var listOfIdsFromLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
     cardFromLocalStorage = Object.assign(new ToDoList(), cardFromLocalStorage);
     cardFromLocalStorage.deleteFromStorage(cardFromLocalStorage, listOfIdsFromLocalStorage, allTaskListIds);
-    // listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
-    // allTaskListIds = listOfIdsFromLocalStorage;
-    // window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
-    // if (allTaskListIds.length === 0) {
-    //   displayNoListsInDom();
-    // }
     cardToDelete.remove();
   }
 }

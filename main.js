@@ -86,27 +86,28 @@ function populateTaskListsFromLocalStorage() {
 
   }
 }
-function populateCards(listOfTasks) {
+function populateCards(taskAtHand) {
   var checklistHTML = '';
 
-  for (var i = 0; i < listOfTasks.tasks.length; i++) {
+  for (var i = 0; i < taskAtHand.tasks.length; i++) {
     var isChecked;
-    listOfTasks.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
+    // console.log(taskAtHand);
+    taskAtHand.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
     checklistHTML += `<li class="task-list-item">
-      <input id="${listOfTasks.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
-      <label id="${listOfTasks.tasks[i].id}" class="task" for="${listOfTasks.tasks[i].id}">${listOfTasks.tasks[i].description}</label>
+      <input id="${taskAtHand.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
+      <label id="${taskAtHand.tasks[i].id}" class="task" for="${taskAtHand.tasks[i].id}">${taskAtHand.tasks[i].description}</label>
     </li>`;
   }
 
   var isUrgent = null;
-  listOfTasks.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+  taskAtHand.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
 
   var allTasksChecked = (task) => task.checked === true;
-  var isAbleToDelete = listOfTasks.tasks.every(allTasksChecked) === true;
+  var isAbleToDelete = taskAtHand.tasks.every(allTasksChecked) === true;
   isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
 
-  var newTaskList = `<section id="${listOfTasks.id}" class="task-box ${isUrgent}">
-    <h3>${listOfTasks.title}</h3>
+  var newTaskList = `<section id="${taskAtHand.id}" class="task-box ${isUrgent}">
+    <h3>${taskAtHand.title}</h3>
     <ul class="task-list">
       ${checklistHTML}
     </ul>
@@ -185,7 +186,7 @@ function removeTask() {
 function createTaskList() {
   if (event.target.id === 'createTaskList') {
     currentTaskList.title = taskListTitle.value;
-    updateTaskIdsList();
+    // updateTaskIdsList();
     currentTaskList.saveToStorage();
     removeNoListsMessage();
     addTaskListToDom();
@@ -270,38 +271,60 @@ function toggleListUrgent(event) {
     // event.target.closest('.task-box').classList.add('js-urgent');
     var clickedOnTaskList = event.target.closest('.task-box');
     var taskBoxId = clickedOnTaskList.id;
-    var listToUpdate = pullListFromLocalStorage(taskBoxId);
+    var listToUpdate = listOfTasks.find(function(list) {
+      return list.id == taskBoxId;
+    })
+    // listToUpdate = Object.assign(new ToDoList(), listToUpdate);
+    // listToUpdate.updateToDo();
+    // console.log(listToUpdate);
+    // var listToUpdate = pullListFromLocalStorage(taskBoxId);
     updateListUrgency(listToUpdate, clickedOnTaskList);
 
   }
 }
 
-function pullListFromLocalStorage(taskBoxId) {
-  return JSON.parse(window.localStorage.getItem(taskBoxId));
-}
-
 function updateListUrgency(listToUpdate, clickedOnTaskList) {
   // Object assign to re-add methods
-  var listInstance = new ToDoList();
-  listInstance = Object.assign(listInstance, listToUpdate);
+  // var listInstance = new ToDoList();
+  // listToUpdate = Object.assign(new ToDoList(), listToUpdate);
 
   // Update Urgency
-  listInstance.updateToDo();
+  listToUpdate.updateToDo();
 
   // Update Dom for urgent styling
-  updateUrgentStyling(listInstance, clickedOnTaskList);
+  updateUrgentStyling(listToUpdate, clickedOnTaskList);
 
   // Push back to
-  listInstance.saveToStorage();
+  // listToUpdate.saveToStorage();
+  window.localStorage.setItem('listOfTasks', JSON.stringify(listOfTasks));
 }
 
-function updateTaskIdsList() {
-  allTaskListIds.push(currentTaskList.id);
-  window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
-}
+// function pullListFromLocalStorage(taskBoxId) {
+//   return JSON.parse(window.localStorage.getItem(taskBoxId));
+// }
 
-function updateUrgentStyling(listInstance, clickedOnTaskList) {
-  listInstance.urgent === true ? clickedOnTaskList.classList.add('js-urgent') : clickedOnTaskList.classList.remove('js-urgent');
+// function updateListUrgency(listToUpdate, clickedOnTaskList) {
+//   // Object assign to re-add methods
+//   var listInstance = new ToDoList();
+//   listInstance = Object.assign(listInstance, listToUpdate);
+//
+//   // Update Urgency
+//   listInstance.updateToDo();
+//
+//   // Update Dom for urgent styling
+//   updateUrgentStyling(listInstance, clickedOnTaskList);
+//
+//   // Push back to
+//   listInstance.saveToStorage();
+// }
+
+// function updateTaskIdsList() {
+//   allTaskListIds.push(currentTaskList.id);
+//   window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+// }
+
+function updateUrgentStyling(listToUpdate, clickedOnTaskList) {
+  listToUpdate.urgent === true ? clickedOnTaskList.classList.add('js-urgent') : clickedOnTaskList.classList.remove('js-urgent');
 }
 
 function markTaskComplete(event) {
@@ -309,19 +332,59 @@ function markTaskComplete(event) {
   if (eTarget.classList.contains('task')) {
     var taskId = eTarget.id;
     var taskListId = eTarget.closest('.task-box').id;
-    var taskToEdit = JSON.parse(window.localStorage.getItem(taskListId));
-    var taskListWithMethods = Object.assign(new ToDoList(), taskToEdit);
-    taskListWithMethods.updateTask(taskId, taskListId);
+
+    var taskListToEdit = listOfTasks.find(function(task) {
+      return task.id == taskListId;
+    })
+
+    // console.log(taskListToEdit); // has tasks objects
+    // taskListToEdit = Object.assign(new ToDoList(), taskListToEdit);
+    // console.log(taskListToEdit); // has tasks objects
+
+    // var taskListToEdit = JSON.parse(window.localStorage.getItem(taskListId));
+    // var taskListWithMethods = Object.assign(new ToDoList(), taskListToEdit);
+    taskListToEdit.updateTask(taskId, taskListId);
   }
   validateDeleteCardButton(event);
 }
 
+// function markTaskComplete(event) {
+//   var eTarget = event.target;
+//   if (eTarget.classList.contains('task')) {
+//     var taskId = eTarget.id;
+//     var taskListId = eTarget.closest('.task-box').id;
+//     var taskToEdit = JSON.parse(window.localStorage.getItem(taskListId));
+//     var taskListWithMethods = Object.assign(new ToDoList(), taskToEdit);
+//     taskListWithMethods.updateTask(taskId, taskListId);
+//   }
+//   validateDeleteCardButton(event);
+// }
+
+// function validateDeleteCardButton(event) {
+//   var eventCard = event.target.closest('.task-box');
+//   var cardToValidate = JSON.parse(window.localStorage.getItem(eventCard.id));
+//   var allTasksChecked = (task) => task.checked === true;
+//   var enableDelete = cardToValidate.tasks.every(allTasksChecked) === true;
+//   setStatusOfDeleteCardButton(eventCard, enableDelete);
+// }
+
 function validateDeleteCardButton(event) {
   var eventCard = event.target.closest('.task-box');
-  var cardToValidate = JSON.parse(window.localStorage.getItem(eventCard.id));
-  var allTasksChecked = (task) => task.checked === true;
-  var enableDelete = cardToValidate.tasks.every(allTasksChecked) === true;
-  setStatusOfDeleteCardButton(eventCard, enableDelete);
+  var cardToValidate;
+  for (var i = 0; i < listOfTasks.length; i++) {
+    if (listOfTasks[i].id == eventCard.id) {
+      cardToValidate = listOfTasks[i];
+    }
+  }
+  var ableToDelete = true;
+  for (var i = 0; i < cardToValidate.tasks.length; i++) {
+    if (cardToValidate.tasks[i].checked === false) {
+      ableToDelete = false;
+    } else {
+      ableToDelete = true;
+    }
+  }
+  setStatusOfDeleteCardButton(eventCard, ableToDelete);
 }
 
 function setStatusOfDeleteCardButton(eventCard, enableDelete) {
@@ -335,12 +398,15 @@ function setStatusOfDeleteCardButton(eventCard, enableDelete) {
 function deleteTaskCard(event) {
   if (event.target.classList.contains('delete-card')) {
     var cardToDelete = event.target.closest('.task-box');
-    var cardFromLocalStorage = JSON.parse(window.localStorage.getItem(cardToDelete.id));
-    var listOfIdsFromLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
-    cardFromLocalStorage = Object.assign(new ToDoList(), cardFromLocalStorage);
-    cardFromLocalStorage.deleteFromStorage(cardFromLocalStorage, listOfIdsFromLocalStorage, allTaskListIds);
+    var cardToDeleteId = cardToDelete.id;
+    var taskToDelete = listOfTasks.find(function(task) {
+      return task.id == cardToDeleteId;
+    })
+    listOfTasks.splice(listOfTasks.indexOf(taskToDelete), 1);
+    window.localStorage.setItem('listOfTasks', JSON.stringify(listOfTasks));
     cardToDelete.remove();
+    if (listOfTasks.length === 0) {
+      displayNoListsInDom();
+    }
   }
 }
-
-// function

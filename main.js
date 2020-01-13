@@ -22,6 +22,7 @@ createTaskColumn.addEventListener('click', function() {
 taskListColumn.addEventListener('click', function() {
   toggleListUrgent(event);
   markTaskComplete(event);
+  deleteTaskCard(event);
   // validateDeleteCardButton(event);
 })
 
@@ -37,7 +38,7 @@ window.addEventListener('load', function() {
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
-  if (taskListsInLocalStorage === null) {
+  if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
     allTaskListIds = [];
     displayNoListsInDom();
   } else {
@@ -47,7 +48,7 @@ function pullSavedTaskListsFromLocalStorage() {
 }
 
 function displayNoListsInDom() {
-  taskListColumn.innerHTML = `<p class="no-task-lists active">No task lists to display. Use the form to the left to create a task list.</p>`
+  taskListColumn.querySelector('.no-task-lists').classList.add('active');
 }
 
 function populateTaskListsFromLocalStorage() {
@@ -265,5 +266,26 @@ function setStatusOfDeleteCardButton(eventCard, enableDelete) {
     eventCard.querySelector('.delete-card').removeAttribute('disabled');
   } else {
     eventCard.querySelector('.delete-card').setAttribute('disabled', '');
+  }
+}
+
+function deleteTaskCard(event) {
+  if (event.target.classList.contains('delete-card')) {
+    var cardToDelete = event.target.closest('.task-box');
+    var cardFromLocalStorage = JSON.parse(window.localStorage.getItem(cardToDelete.id));
+    var listOfIdsFromLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
+
+    //
+    // Refactor this function to use the deleteFromStorage method on the todo-list Class.
+    //
+
+    window.localStorage.removeItem(cardFromLocalStorage.id);
+    listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
+    allTaskListIds = listOfIdsFromLocalStorage;
+    window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+    if (allTaskListIds.length === 0) {
+      displayNoListsInDom();
+    }
+    cardToDelete.remove();
   }
 }

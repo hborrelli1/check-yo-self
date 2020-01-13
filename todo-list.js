@@ -23,7 +23,10 @@ class ToDoList {
     this.urgent === false ? this.urgent = true : this.urgent = false;
   }
 
-  updateTask() {
+  updateTask(taskId, taskListId) {
     // Should update a task's content and if it has been completed
+    var taskToMarkChecked = this.tasks.find(task => task.id == taskId);
+    taskToMarkChecked.checked === true ? taskToMarkChecked.checked = false : taskToMarkChecked.checked = true;
+    window.localStorage.setItem(taskListId, JSON.stringify(this));
   }
 }

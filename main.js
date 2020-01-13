@@ -16,12 +16,14 @@ createTaskColumn.addEventListener('click', function() {
   }
   removeTask(event);
   createTaskList();
-  clearAllFields()
+  clearAllFields();
 });
 
 taskListColumn.addEventListener('click', function() {
   toggleListUrgent(event);
   markTaskComplete(event);
+  deleteTaskCard(event);
+  // validateDeleteCardButton(event);
 })
 
 document.addEventListener('keyup', function() {
@@ -36,7 +38,7 @@ window.addEventListener('load', function() {
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
-  if (taskListsInLocalStorage === null) {
+  if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
     allTaskListIds = [];
     displayNoListsInDom();
   } else {
@@ -46,7 +48,7 @@ function pullSavedTaskListsFromLocalStorage() {
 }
 
 function displayNoListsInDom() {
-  taskListColumn.innerHTML = `<p class="no-task-lists">No task lists to display. Use the form to the left to create a task list.</p>`
+  taskListColumn.querySelector('.no-task-lists').classList.add('active');
 }
 
 function populateTaskListsFromLocalStorage() {
@@ -60,14 +62,20 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
   var checklistHTML = '';
 
   for (var i = 0; i < listFromLocalStorage.tasks.length; i++) {
+    var isChecked;
+    listFromLocalStorage.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
     checklistHTML += `<li class="task-list-item">
-      <input class="task" id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="">
-      <label class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
+      <input id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
+      <label id="${listFromLocalStorage.tasks[i].id}" class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
     </li>`;
   }
 
   var isUrgent = null;
   listFromLocalStorage.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+
+  var allTasksChecked = (task) => task.checked === true;
+  var isAbleToDelete = listFromLocalStorage.tasks.every(allTasksChecked) === true;
+  isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
 
   var newTaskList = `<section id="${listFromLocalStorage.id}" class="task-box ${isUrgent}">
     <h3>${listFromLocalStorage.title}</h3>
@@ -75,14 +83,14 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
       ${checklistHTML}
     </ul>
     <footer>
-      <div class="js-urgent">
+      <button class="urgent-button">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
-      </div>
-      <div class="delete">
+      </button>
+      <button class="delete-card" ${isAbleToDelete}>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
-      </div>
+      </button>
     </footer>
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
@@ -115,13 +123,15 @@ function createTaskList() {
     updateTaskIdsList();
     currentTaskList.saveToStorage();
     validateMakeTaskListForm();
+    // debugger;
     removeNoListsMessage();
+    // debugger;
     addTaskListToDom();
   }
 }
 
 function removeNoListsMessage() {
-  taskListColumn.innerHTML = '';
+  taskListColumn.querySelector('.no-task-lists').classList.remove('active');
 }
 
 function addTaskListToDom() {
@@ -129,8 +139,8 @@ function addTaskListToDom() {
 
   for (var i = 0; i < currentTaskList.tasks.length; i++) {
     checklistHTML += `<li class="task-list-item">
-      <input class="task" id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
-      <label class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
+      <input id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
+      <label id="${currentTaskList.tasks[i].id}" class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
     </li>`;
   }
 
@@ -140,14 +150,14 @@ function addTaskListToDom() {
       ${checklistHTML}
     </ul>
     <footer>
-      <div class="js-urgent">
+      <button class="urgent-button">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
-      </div>
-      <div class="delete">
+      </button>
+      <button class="delete-card" disabled>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
-      </div>
+      </button>
     </footer>
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
@@ -192,8 +202,8 @@ function clearAllFields() {
 }
 
 function toggleListUrgent(event) {
-  var urgentButtonTarget = event.target.classList.contains('js-urgent');
-  if (urgentButtonTarget) {
+  // var urgentButtonTarget = event.target.classList.contains('js-urgent');
+  if (event.target.classList.contains('urgent-button')) {
     // event.target.closest('.task-box').classList.add('js-urgent');
     var clickedOnTaskList = event.target.closest('.task-box');
     var taskBoxId = clickedOnTaskList.id;
@@ -235,6 +245,47 @@ function markTaskComplete(event) {
   var eTarget = event.target;
   if (eTarget.classList.contains('task')) {
     var taskId = eTarget.id;
-    console.log(taskId);
+    var taskListId = eTarget.closest('.task-box').id;
+    var taskToEdit = JSON.parse(window.localStorage.getItem(taskListId));
+    var taskListWithMethods = Object.assign(new ToDoList(), taskToEdit);
+    taskListWithMethods.updateTask(taskId, taskListId);
+  }
+  validateDeleteCardButton(event);
+}
+
+function validateDeleteCardButton(event) {
+  var eventCard = event.target.closest('.task-box');
+  var cardToValidate = JSON.parse(window.localStorage.getItem(eventCard.id));
+  var allTasksChecked = (task) => task.checked === true;
+  var enableDelete = cardToValidate.tasks.every(allTasksChecked) === true;
+  setStatusOfDeleteCardButton(eventCard, enableDelete);
+}
+
+function setStatusOfDeleteCardButton(eventCard, enableDelete) {
+  if (enableDelete === true) {
+    eventCard.querySelector('.delete-card').removeAttribute('disabled');
+  } else {
+    eventCard.querySelector('.delete-card').setAttribute('disabled', '');
+  }
+}
+
+function deleteTaskCard(event) {
+  if (event.target.classList.contains('delete-card')) {
+    var cardToDelete = event.target.closest('.task-box');
+    var cardFromLocalStorage = JSON.parse(window.localStorage.getItem(cardToDelete.id));
+    var listOfIdsFromLocalStorage = JSON.parse(window.localStorage.getItem('savedTaskListIds'));
+
+    //
+    // Refactor this function to use the deleteFromStorage method on the todo-list Class.
+    //
+
+    window.localStorage.removeItem(cardFromLocalStorage.id);
+    listOfIdsFromLocalStorage.splice(listOfIdsFromLocalStorage.indexOf(cardFromLocalStorage.id), 1);
+    allTaskListIds = listOfIdsFromLocalStorage;
+    window.localStorage.setItem('savedTaskListIds', JSON.stringify(allTaskListIds));
+    if (allTaskListIds.length === 0) {
+      displayNoListsInDom();
+    }
+    cardToDelete.remove();
   }
 }

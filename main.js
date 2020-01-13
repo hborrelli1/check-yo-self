@@ -50,23 +50,19 @@ window.addEventListener('load', function() {
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTasks'));
-  var toDoObjects = taskListsInLocalStorage.map(function(taskList) {
-    return Object.assign(new ToDoList(), taskList);
-    console.log(taskList);
-  })
-  // for (var i = 0; i < taskListsInLocalStorage; i++) {
-  //   taskListsInLocalStorage[i] = Object.assign(new ToDoList(), taskListsInLocalStorage[i]);
-  //   console.log(taskListsInLocalStorage[i]);
-  // }
-
-  // taskListsInLocalStorage = toDoObjects;
-  console.log(toDoObjects);
+  // var toDoObjects = taskListsInLocalStorage.map(function(taskList) {
+  //   return Object.assign(new ToDoList(), taskList);
+  // })
+  // console.log(taskListsInLocalStorage);
 
   if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
     listOfTasks = [];
     displayNoListsInDom();
   } else {
-    listOfTasks = taskListsInLocalStorage;
+    var toDoObjects = taskListsInLocalStorage.map(function(taskList) {
+      return Object.assign(new ToDoList(), taskList);
+    })
+    listOfTasks = toDoObjects;
     populateTaskListsFromLocalStorage();
   }
 }
@@ -84,32 +80,33 @@ function displayNoListsInDom() {
 
 function populateTaskListsFromLocalStorage() {
   for (var i = 0; i < listOfTasks.length; i++) {
-    var listFromLocalStorage = JSON.parse(window.localStorage.getItem(listOfTasks[i]));
-    loadTaskListsFromLocalStorage(listFromLocalStorage);
+    // var listFromLocalStorage = JSON.parse(window.localStorage.getItem(listOfTasks[i]));x
+    // console.log(listOfTasks[i]);
+    populateCards(listOfTasks[i]);
+
   }
 }
-
-function loadTaskListsFromLocalStorage(listFromLocalStorage) {
+function populateCards(listOfTasks) {
   var checklistHTML = '';
 
-  for (var i = 0; i < listFromLocalStorage.tasks.length; i++) {
+  for (var i = 0; i < listOfTasks.tasks.length; i++) {
     var isChecked;
-    listFromLocalStorage.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
+    listOfTasks.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
     checklistHTML += `<li class="task-list-item">
-      <input id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
-      <label id="${listFromLocalStorage.tasks[i].id}" class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
+      <input id="${listOfTasks.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
+      <label id="${listOfTasks.tasks[i].id}" class="task" for="${listOfTasks.tasks[i].id}">${listOfTasks.tasks[i].description}</label>
     </li>`;
   }
 
   var isUrgent = null;
-  listFromLocalStorage.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+  listOfTasks.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
 
   var allTasksChecked = (task) => task.checked === true;
-  var isAbleToDelete = listFromLocalStorage.tasks.every(allTasksChecked) === true;
+  var isAbleToDelete = listOfTasks.tasks.every(allTasksChecked) === true;
   isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
 
-  var newTaskList = `<section id="${listFromLocalStorage.id}" class="task-box ${isUrgent}">
-    <h3>${listFromLocalStorage.title}</h3>
+  var newTaskList = `<section id="${listOfTasks.id}" class="task-box ${isUrgent}">
+    <h3>${listOfTasks.title}</h3>
     <ul class="task-list">
       ${checklistHTML}
     </ul>
@@ -126,6 +123,44 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
 }
+
+// function loadTaskListsFromLocalStorage(listFromLocalStorage) {
+//   var checklistHTML = '';
+//
+//   for (var i = 0; i < listFromLocalStorage.tasks.length; i++) {
+//     var isChecked;
+//     listFromLocalStorage.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
+//     checklistHTML += `<li class="task-list-item">
+//       <input id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
+//       <label id="${listFromLocalStorage.tasks[i].id}" class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
+//     </li>`;
+//   }
+//
+//   var isUrgent = null;
+//   listFromLocalStorage.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+//
+//   var allTasksChecked = (task) => task.checked === true;
+//   var isAbleToDelete = listFromLocalStorage.tasks.every(allTasksChecked) === true;
+//   isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
+//
+//   var newTaskList = `<section id="${listFromLocalStorage.id}" class="task-box ${isUrgent}">
+//     <h3>${listFromLocalStorage.title}</h3>
+//     <ul class="task-list">
+//       ${checklistHTML}
+//     </ul>
+//     <footer>
+//       <button class="urgent-button">
+//         <img src="./assets/urgent.svg" alt="Urgent">
+//         <p>Urgent</p>
+//       </button>
+//       <button class="delete-card" ${isAbleToDelete}>
+//         <img src="./assets/delete.svg" alt="Delete Task List">
+//         <p>Delete</p>
+//       </button>
+//     </footer>
+//   </section>`;
+//   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
+// }
 
 function addTask(event) {
   if (event.target.id === 'createTask') {

@@ -47,7 +47,7 @@ function pullSavedTaskListsFromLocalStorage() {
 }
 
 function displayNoListsInDom() {
-  taskListColumn.innerHTML = `<p class="no-task-lists">No task lists to display. Use the form to the left to create a task list.</p>`
+  taskListColumn.innerHTML = `<p class="no-task-lists active">No task lists to display. Use the form to the left to create a task list.</p>`
 }
 
 function populateTaskListsFromLocalStorage() {
@@ -82,7 +82,7 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
       ${checklistHTML}
     </ul>
     <footer>
-      <button class="js-urgent">
+      <button class="urgent-button">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
       </button>
@@ -122,13 +122,15 @@ function createTaskList() {
     updateTaskIdsList();
     currentTaskList.saveToStorage();
     validateMakeTaskListForm();
+    // debugger;
     removeNoListsMessage();
+    // debugger;
     addTaskListToDom();
   }
 }
 
 function removeNoListsMessage() {
-  taskListColumn.innerHTML = '';
+  taskListColumn.querySelector('.no-task-lists').classList.remove('active');
 }
 
 function addTaskListToDom() {
@@ -147,7 +149,7 @@ function addTaskListToDom() {
       ${checklistHTML}
     </ul>
     <footer>
-      <button class="js-urgent">
+      <button class="urgent-button">
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
       </button>
@@ -199,8 +201,8 @@ function clearAllFields() {
 }
 
 function toggleListUrgent(event) {
-  var urgentButtonTarget = event.target.classList.contains('js-urgent');
-  if (urgentButtonTarget) {
+  // var urgentButtonTarget = event.target.classList.contains('js-urgent');
+  if (event.target.classList.contains('urgent-button')) {
     // event.target.closest('.task-box').classList.add('js-urgent');
     var clickedOnTaskList = event.target.closest('.task-box');
     var taskBoxId = clickedOnTaskList.id;

@@ -185,6 +185,16 @@ main {
   list-style-type:none;
   font-size:18px;
   margin-bottom:10px;
+  display: flex;
+  align-items:center;
+}
+
+.task-box .task-list .task-list-item input {
+  margin-right:-20px;
+}
+
+.task-box .task-list .task-list-item .task {
+  padding-left:30px;
 }
 
 .task-box .task-list .task-list-item.done {
@@ -201,7 +211,7 @@ main {
 }
 
 .task-box footer .js-urgent,
-.task-box footer .delete {
+.task-box footer .delete-card {
   width:10%;
   text-align: center;
   background-color:transparent;
@@ -213,18 +223,18 @@ main {
 }
 
 .task-box footer .js-urgent p,
-.task-box footer .delete p {
+.task-box footer .delete-card p {
   color:#3c6577;
   font-size:16px;
 }
 
 .task-box footer .js-urgent > *,
-.task-box footer .delete > * {
+.task-box footer .delete-card > * {
   pointer-events: none;
 }
 
 .task-box footer .js-urgent img,
-.task-box footer .delete img {
+.task-box footer .delete-card img {
   height:40px;
   margin-bottom:5px;
 }

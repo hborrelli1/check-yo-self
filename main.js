@@ -16,12 +16,13 @@ createTaskColumn.addEventListener('click', function() {
   }
   removeTask(event);
   createTaskList();
-  clearAllFields()
+  clearAllFields();
 });
 
 taskListColumn.addEventListener('click', function() {
   toggleListUrgent(event);
   markTaskComplete(event);
+  // validateDeleteCardButton(event);
 })
 
 document.addEventListener('keyup', function() {
@@ -71,6 +72,10 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
   var isUrgent = null;
   listFromLocalStorage.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
 
+  var allTasksChecked = (task) => task.checked === true;
+  var isAbleToDelete = listFromLocalStorage.tasks.every(allTasksChecked) === true;
+  isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
+
   var newTaskList = `<section id="${listFromLocalStorage.id}" class="task-box ${isUrgent}">
     <h3>${listFromLocalStorage.title}</h3>
     <ul class="task-list">
@@ -81,7 +86,7 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
       </button>
-      <button class="delete" disabled>
+      <button class="delete-card" ${isAbleToDelete}>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
       </button>
@@ -146,7 +151,7 @@ function addTaskListToDom() {
         <img src="./assets/urgent.svg" alt="Urgent">
         <p>Urgent</p>
       </button>
-      <button class="delete" disabled>
+      <button class="delete-card" disabled>
         <img src="./assets/delete.svg" alt="Delete Task List">
         <p>Delete</p>
       </button>
@@ -239,10 +244,24 @@ function markTaskComplete(event) {
     var taskId = eTarget.id;
     var taskListId = eTarget.closest('.task-box').id;
     var taskToEdit = JSON.parse(window.localStorage.getItem(taskListId));
-
-    // overwrite to new instance of ToDoList();
     var taskListWithMethods = Object.assign(new ToDoList(), taskToEdit);
+    taskListWithMethods.updateTask(taskId, taskListId);
+  }
+  validateDeleteCardButton(event);
+}
 
-    taskListWithMethods.updateTask(taskId, taskListId)
+function validateDeleteCardButton(event) {
+  var eventCard = event.target.closest('.task-box');
+  var cardToValidate = JSON.parse(window.localStorage.getItem(eventCard.id));
+  var allTasksChecked = (task) => task.checked === true;
+  var enableDelete = cardToValidate.tasks.every(allTasksChecked) === true;
+  setStatusOfDeleteCardButton(eventCard, enableDelete);
+}
+
+function setStatusOfDeleteCardButton(eventCard, enableDelete) {
+  if (enableDelete === true) {
+    eventCard.querySelector('.delete-card').removeAttribute('disabled');
+  } else {
+    eventCard.querySelector('.delete-card').setAttribute('disabled', '');
   }
 }

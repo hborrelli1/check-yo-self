@@ -60,9 +60,11 @@ function loadTaskListsFromLocalStorage(listFromLocalStorage) {
   var checklistHTML = '';
 
   for (var i = 0; i < listFromLocalStorage.tasks.length; i++) {
+    var isChecked;
+    listFromLocalStorage.tasks[i].checked === true ? isChecked = 'checked' : isChecked = '';
     checklistHTML += `<li class="task-list-item">
-      <input class="task" id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="">
-      <label class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
+      <input id="${listFromLocalStorage.tasks[i].id}" type="checkbox" name="" value="" ${isChecked}>
+      <label id="${listFromLocalStorage.tasks[i].id}" class="task" for="${listFromLocalStorage.tasks[i].id}">${listFromLocalStorage.tasks[i].description}</label>
     </li>`;
   }
 
@@ -129,8 +131,8 @@ function addTaskListToDom() {
 
   for (var i = 0; i < currentTaskList.tasks.length; i++) {
     checklistHTML += `<li class="task-list-item">
-      <input class="task" id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
-      <label class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
+      <input id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
+      <label id="${currentTaskList.tasks[i].id}" class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
     </li>`;
   }
 
@@ -235,6 +237,12 @@ function markTaskComplete(event) {
   var eTarget = event.target;
   if (eTarget.classList.contains('task')) {
     var taskId = eTarget.id;
-    console.log(taskId);
+    var taskListId = eTarget.closest('.task-box').id;
+    var taskToEdit = JSON.parse(window.localStorage.getItem(taskListId));
+
+    // overwrite to new instance of ToDoList();
+    var taskListWithMethods = Object.assign(new ToDoList(), taskToEdit);
+
+    taskListWithMethods.updateTask(taskId, taskListId)
   }
 }

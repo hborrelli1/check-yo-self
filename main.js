@@ -4,6 +4,7 @@ var taskListTitle = document.getElementById('taskListTitle');
 var tasksList = document.querySelector('.tasks-list');
 var tasksToAddList = document.querySelector('.tasks-to-add');
 var searchInput = document.querySelector('.search-input');
+var urgentFilterButton = document.querySelector('.urgency-button');
 var createTaskButton = document.getElementById('#createTask');
 var createTaskListButton = document.getElementById('createTaskList');
 var clearAllButton = document.getElementById('clearAllButton');
@@ -36,6 +37,7 @@ window.addEventListener('load', function() {
 });
 
 searchInput.addEventListener('input', searchTasks);
+urgentFilterButton.addEventListener('click', toggleUrgencyFilter);
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTasks'));
@@ -58,6 +60,7 @@ function displayNoListsInDom() {
 function populateTaskListsFromLocalStorage() {
   for (var i = 0; i < listOfTasks.length; i++) {
     populateCards(listOfTasks[i]);
+
   }
 }
 
@@ -74,6 +77,7 @@ function populateCards(taskAtHand) {
 
   var isUrgent = null;
   taskAtHand.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
+  var urgentIcon = toggleUrgentIcon(taskAtHand);
 
   var allTasksChecked = (task) => task.checked === true;
   var isAbleToDelete = taskAtHand.tasks.every(allTasksChecked) === true;
@@ -86,7 +90,7 @@ function populateCards(taskAtHand) {
     </ul>
     <footer>
       <button class="urgent-button">
-        <img src="./assets/urgent.svg" alt="Urgent">
+        <img src="./assets/${urgentIcon}" alt="Urgent">
         <p>Urgent</p>
       </button>
       <button class="delete-card" ${isAbleToDelete}>
@@ -189,7 +193,15 @@ function updateListUrgency(listToUpdate, clickedOnTaskList) {
 }
 
 function updateUrgentStyling(listToUpdate, clickedOnTaskList) {
-  listToUpdate.urgent === true ? clickedOnTaskList.classList.add('js-urgent') : clickedOnTaskList.classList.remove('js-urgent');
+  listToUpdate.urgent === true ? addUrgentClass() : removeUrgentClass();
+  function addUrgentClass() {
+    clickedOnTaskList.classList.add('js-urgent');
+    clickedOnTaskList.querySelector('img').src = './assets/urgent-active.svg';
+  }
+  function removeUrgentClass() {
+    clickedOnTaskList.classList.remove('js-urgent');
+    clickedOnTaskList.querySelector('img').src = './assets/urgent.svg';
+  }
 }
 
 function markTaskComplete(event) {
@@ -201,8 +213,8 @@ function markTaskComplete(event) {
       return task.id == taskListId;
     })
     taskListToEdit.updateTask(taskId, taskListId);
+    validateDeleteCardButton(event);
   }
-  validateDeleteCardButton(event);
 }
 
 function validateDeleteCardButton(event) {
@@ -267,5 +279,49 @@ function toggleListMessage(taskListsThatMatch) {
     displayNoListsInDom();
   } else {
     taskListColumn.querySelector('.no-task-lists').classList.remove('active');
+  }
+}
+
+function toggleUrgencyFilter(event) {
+  var eTarget = event.target;
+  if (eTarget.classList.contains('active')) {
+    eTarget.classList.remove('active');
+    populateIfNotUrgent();
+  } else {
+    filterUrgentCards();
+    eTarget.classList.add('active');
+  }
+}
+
+function filterUrgentCards() {
+  var listOfUrgentTasks = [];
+  grabUrgentTaskLists(listOfUrgentTasks);
+  updateTaskListsBasedOnSearch(listOfUrgentTasks);
+  for (var i = 0; i < listOfUrgentTasks.length; i++) {
+    populateCards(listOfUrgentTasks[i]);
+  }
+}
+
+function grabUrgentTaskLists(listOfUrgentTasks) {
+  listOfTasks.forEach(function(list) {
+    if (list.urgent == true) {
+      return listOfUrgentTasks.push(list);
+    }
+  })
+}
+
+function populateIfNotUrgent() {
+  for (var i = 0; i < listOfTasks.length; i++) {
+    if (listOfTasks[i].urgent != true) {
+      populateCards(listOfTasks[i]);
+    }
+  }
+}
+
+function toggleUrgentIcon(card) {
+  if (card.urgent === true) {
+    return 'urgent-active.svg';
+  } else {
+    return 'urgent.svg';
   }
 }

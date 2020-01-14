@@ -50,6 +50,10 @@ button:disabled {
   opacity:.7;
 }
 
+.urgency-button.active {
+  background-color:#ee4923;
+}
+
 input {
   padding:0px 10px;
   font-size:16px;
@@ -234,6 +238,7 @@ main {
 .task-box footer .delete-card p {
   color:#3c6577;
   font-size:16px;
+  font-weight:600;
 }
 
 .task-box footer .urgent-button > *,
@@ -252,10 +257,12 @@ main {
   border-color:#ffc30c;
 }
 
-.task-box.js-urgent footer .urgent-button {
+.task-box.js-urgent footer .urgent-button p {
   color:#b23a25;
+  color:#ee4923;
 }
 
 .urgency-button.active {
   border-color:#782616;
+  border-color:#b23a24;
 }

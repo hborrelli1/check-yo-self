@@ -15,5 +15,12 @@ Solidify and demonstrate your understanding of:
 - Understand the difference between the data model and how the data is displayed on the DOM
 - Ability to match/recreate a UI and create a great UX
 
+## Technologies Used
+This app made use of HTML, CSS, and Javascript. LocalStorage was also used to store and persist data after reloading the page.
+
 ## Screenshots
-![App Screenshot](./assets/app-screenshot.png)
+App Screenshot:
+![App Screenshot](./assets/app-screenshot.png)  
+
+Comp Screenshot:  
+![App Screenshot](./assets/check-yo-self-01.jpg)  

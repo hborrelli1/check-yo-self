@@ -237,18 +237,9 @@ function validateDeleteCardButton(event) {
       cardToValidate = listOfTasks[i];
     }
   }
-  // var ableToDelete = true;
-  // for (var i = 0; i < cardToValidate.tasks.length; i++) {
-  //   if (cardToValidate.tasks[i].checked === false) {
-  //     ableToDelete = false;
-  //   } else {
-  //     ableToDelete = true;
-  //   }
-  // }
   var ableToDelete = cardToValidate.tasks.every(function(task) {
     return (task.checked == true);
   })
-  // console.log(ableToDelete);
   setStatusOfDeleteCardButton(eventCard, ableToDelete);
 }
 

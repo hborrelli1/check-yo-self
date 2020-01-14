@@ -9,8 +9,7 @@ var createTaskButton = document.getElementById('#createTask');
 var createTaskListButton = document.getElementById('createTaskList');
 var clearAllButton = document.getElementById('clearAllButton');
 var taskDescription = document.getElementById('taskDescription');
-var allTaskListIds = [];
-var listOfTasks = [];
+var listOfTodos = [];
 var listOfUrgentTasks = [];
 var currentTaskList = new ToDoList();
 
@@ -41,17 +40,22 @@ searchInput.addEventListener('input', searchTasks);
 urgentFilterButton.addEventListener('click', toggleUrgencyFilter);
 
 function pullSavedTaskListsFromLocalStorage() {
-  var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTasks'));
+  var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTodos'));
   if ((taskListsInLocalStorage === null) || taskListsInLocalStorage.length === 0) {
-    listOfTasks = [];
+    listOfTodos = [];
     displayNoListsInDom();
   } else {
-    var toDoObjects = taskListsInLocalStorage.map(function(taskList) {
-      return Object.assign(new ToDoList(), taskList);
-    });
-    listOfTasks = toDoObjects;
+    var toDoObjects = reassignObjectsToTaskListClass(taskListsInLocalStorage);
+    listOfTodos = toDoObjects;
     populateTaskListsFromLocalStorage();
   }
+}
+
+function reassignObjectsToTaskListClass(listOfTodos) {
+  var toDoObjects = listOfTodos.map(function(taskList) {
+    return Object.assign(new ToDoList(), taskList);
+  });
+  return toDoObjects;
 }
 
 function displayNoListsInDom() {
@@ -59,9 +63,8 @@ function displayNoListsInDom() {
 }
 
 function populateTaskListsFromLocalStorage() {
-  for (var i = 0; i < listOfTasks.length; i++) {
-    populateCards(listOfTasks[i]);
-
+  for (var i = 0; i < listOfTodos.length; i++) {
+    populateCards(listOfTodos[i]);
   }
 }
 
@@ -130,7 +133,6 @@ function createTaskList() {
     currentTaskList.title = taskListTitle.value;
     currentTaskList.saveToStorage();
     removeNoListsMessage();
-    // addTaskListToDom();
     populateCards(currentTaskList);
     validateMakeTaskListForm();
   }
@@ -180,7 +182,7 @@ function toggleListUrgent(event) {
   if (event.target.classList.contains('urgent-button')) {
     var clickedOnTaskList = event.target.closest('.task-box');
     var taskBoxId = clickedOnTaskList.id;
-    var listToUpdate = listOfTasks.find(function(list) {
+    var listToUpdate = listOfTodos.find(function(list) {
       return list.id == taskBoxId;
     })
     updateListUrgency(listToUpdate, clickedOnTaskList);
@@ -190,19 +192,21 @@ function toggleListUrgent(event) {
 function updateListUrgency(listToUpdate, clickedOnTaskList) {
   listToUpdate.updateToDo();
   updateUrgentStyling(listToUpdate, clickedOnTaskList);
-  window.localStorage.setItem('listOfTasks', JSON.stringify(listOfTasks));
+  window.localStorage.setItem('listOfTodos', JSON.stringify(listOfTodos));
 }
 
 function updateUrgentStyling(listToUpdate, clickedOnTaskList) {
-  listToUpdate.urgent === true ? addUrgentClass() : removeUrgentClass();
-  function addUrgentClass() {
-    clickedOnTaskList.classList.add('js-urgent');
-    clickedOnTaskList.querySelector('img').src = './assets/urgent-active.svg';
-  }
-  function removeUrgentClass() {
-    clickedOnTaskList.classList.remove('js-urgent');
-    clickedOnTaskList.querySelector('img').src = './assets/urgent.svg';
-  }
+  listToUpdate.urgent === true ? addUrgentClass(clickedOnTaskList) : removeUrgentClass(clickedOnTaskList);
+}
+
+function addUrgentClass(task) {
+  task.classList.add('js-urgent');
+  task.querySelector('img').src = './assets/urgent-active.svg';
+}
+
+function removeUrgentClass(task) {
+  task.classList.remove('js-urgent');
+  task.querySelector('img').src = './assets/urgent.svg';
 }
 
 function markTaskComplete(event) {
@@ -210,26 +214,35 @@ function markTaskComplete(event) {
   if (eTarget.classList.contains('task')) {
     var taskId = eTarget.id;
     var taskListId = eTarget.closest('.task-box').id;
-    var taskListToEdit = listOfTasks.find(function(task) {
-      return task.id == taskListId;
-    })
+    var taskListToEdit = findCurrentTask(taskListId);
     taskListToEdit.updateTask(taskId, taskListId);
     validateDeleteCardButton(event);
   }
 }
 
+function findCurrentTask(id) {
+   taskListToEdit = listOfTodos.find(function(task) {
+    return task.id == id;
+  })
+  return taskListToEdit;
+}
+
 function validateDeleteCardButton(event) {
   var eventCard = event.target.closest('.task-box');
-  var cardToValidate;
-  for (var i = 0; i < listOfTasks.length; i++) {
-    if (listOfTasks[i].id == eventCard.id) {
-      cardToValidate = listOfTasks[i];
-    }
-  }
+  var cardToValidate = findCardToValidate(eventCard);
   var ableToDelete = cardToValidate.tasks.every(function(task) {
     return (task.checked == true);
   })
   setStatusOfDeleteCardButton(eventCard, ableToDelete);
+}
+
+function findCardToValidate(eventCard, cardToValidate) {
+  for (var i = 0; i < listOfTodos.length; i++) {
+    if (listOfTodos[i].id == eventCard.id) {
+      cardToValidate = listOfTodos[i];
+      return cardToValidate;
+    }
+  }
 }
 
 function setStatusOfDeleteCardButton(eventCard, enableDelete) {
@@ -244,22 +257,25 @@ function deleteTaskCard(event) {
   if (event.target.classList.contains('delete-card')) {
     var cardToDelete = event.target.closest('.task-box');
     var cardToDeleteId = cardToDelete.id;
-    var taskToDelete = listOfTasks.find(function(task) {
+    var taskToDelete = listOfTodos.find(function(task) {
       return task.id == cardToDeleteId;
     })
-    listOfTasks.splice(listOfTasks.indexOf(taskToDelete), 1);
-    window.localStorage.setItem('listOfTasks', JSON.stringify(listOfTasks));
-    cardToDelete.remove();
-    if (listOfTasks.length === 0) {
-      displayNoListsInDom();
-    }
+    removeTaskCard(cardToDelete, taskToDelete);
+  }
+}
+
+function removeTaskCard(cardToDelete, taskToDelete) {
+  listOfTodos.splice(listOfTodos.indexOf(taskToDelete), 1);
+  window.localStorage.setItem('listOfTodos', JSON.stringify(listOfTodos));
+  cardToDelete.remove();
+  if (listOfTodos.length === 0) {
+    displayNoListsInDom();
   }
 }
 
 function searchTasks() {
   var searchTerm = searchInput.value.toLowerCase();
   taskListsThatMatch = determineWhatToSearch(searchTerm);
-
   updateTaskListsBasedOnSearch(taskListsThatMatch);
   for (var i = 0; i < taskListsThatMatch.length; i++) {
     populateCards(taskListsThatMatch[i]);
@@ -276,12 +292,12 @@ function updateTaskListsBasedOnSearch(taskListsThatMatch) {
 
 function determineWhatToSearch(searchTerm) {
   if (urgentFilterButton.classList.contains('active')) {
-    var taskListsThatMatch = listOfTasks.filter(function(list) {
+    var taskListsThatMatch = listOfTodos.filter(function(list) {
       return (list.title.toLowerCase().includes(searchTerm)) && (list.urgent === true);
     })
     return taskListsThatMatch;
   } else {
-    var taskListsThatMatch = listOfTasks.filter(function(list) {
+    var taskListsThatMatch = listOfTodos.filter(function(list) {
       return list.title.toLowerCase().includes(searchTerm);
     })
     return taskListsThatMatch;
@@ -301,13 +317,21 @@ function toggleUrgencyFilter(event) {
   searchInput.value = '';
   if (eTarget.classList.contains('active')) {
     eTarget.classList.remove('active');
-    taskListColumn.querySelector('.no-task-lists').innerHTML = 'No task lists to display. Use the form to the left to create a task list.';
+    taskListMessage();
     populateIfNotUrgent();
   } else {
-    filterUrgentCards();
-    taskListColumn.querySelector('.no-task-lists').innerHTML = 'No urgent tasks to display';
     eTarget.classList.add('active');
+    urgentListMessage();
+    filterUrgentCards();
   }
+}
+
+function taskListMessage() {
+  taskListColumn.querySelector('.no-task-lists').innerHTML = 'No task lists to display. Use the form to the left to create a task list.';
+}
+
+function urgentListMessage() {
+  taskListColumn.querySelector('.no-task-lists').innerHTML = 'No urgent tasks to display. Mark some tasks urgent to have them displayed while this filter is turned on.';
 }
 
 function filterUrgentCards() {
@@ -320,7 +344,7 @@ function filterUrgentCards() {
 }
 
 function grabUrgentTaskLists(listOfUrgentTasks) {
-  listOfTasks.forEach(function(list) {
+  listOfTodos.forEach(function(list) {
     if (list.urgent == true) {
       return listOfUrgentTasks.push(list);
     }
@@ -328,10 +352,13 @@ function grabUrgentTaskLists(listOfUrgentTasks) {
 }
 
 function populateIfNotUrgent() {
-  for (var i = 0; i < listOfTasks.length; i++) {
-    if (listOfTasks[i].urgent != true) {
-      populateCards(listOfTasks[i]);
+  for (var i = 0; i < listOfTodos.length; i++) {
+    if (listOfTodos[i].urgent != true) {
+      populateCards(listOfTodos[i]);
     }
+  }
+  if (listOfTodos.length > 0) {
+    taskListColumn.querySelector('.no-task-lists').classList.remove('active');
   }
 }
 

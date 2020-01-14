@@ -106,6 +106,7 @@ main {
   /* background-color:#f2f6f7; */
   width:75%;
   margin-left:25%;
+  column-count: 2;
 }
 
 .no-task-lists {
@@ -113,7 +114,6 @@ main {
   color: #93979a;
   font-weight: 500;
   font-size: 18px;
-  text-align: center;
 }
 
 .no-task-lists.active {
@@ -179,9 +179,10 @@ main {
   color:#1f1f3d;
   background-color:#f9fdff;
   border:1px solid #c7d3d8;
-  width:50%;
+  width:100%;
   padding:20px;
   margin-bottom:20px;
+  display: inline-block;
 }
 
 .task-box h3 {

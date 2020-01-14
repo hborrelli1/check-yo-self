@@ -11,6 +11,7 @@ var clearAllButton = document.getElementById('clearAllButton');
 var taskDescription = document.getElementById('taskDescription');
 var allTaskListIds = [];
 var listOfTasks = [];
+var listOfUrgentTasks = [];
 var currentTaskList = new ToDoList();
 
 createTaskColumn.addEventListener('click', function() {
@@ -276,17 +277,13 @@ function updateTaskListsBasedOnSearch(taskListsThatMatch) {
 function determineWhatToSearch(searchTerm) {
   if (urgentFilterButton.classList.contains('active')) {
     var taskListsThatMatch = listOfTasks.filter(function(list) {
-      console.log('urgent flow');
       return (list.title.toLowerCase().includes(searchTerm)) && (list.urgent === true);
     })
     return taskListsThatMatch;
-    console.log(taskListsThatMatch);
   } else {
     var taskListsThatMatch = listOfTasks.filter(function(list) {
-      console.log('normal flow');
       return list.title.toLowerCase().includes(searchTerm);
     })
-    console.log(taskListsThatMatch);
     return taskListsThatMatch;
   }
 }
@@ -304,15 +301,17 @@ function toggleUrgencyFilter(event) {
   searchInput.value = '';
   if (eTarget.classList.contains('active')) {
     eTarget.classList.remove('active');
+    taskListColumn.querySelector('.no-task-lists').innerHTML = 'No task lists to display. Use the form to the left to create a task list.';
     populateIfNotUrgent();
   } else {
     filterUrgentCards();
+    taskListColumn.querySelector('.no-task-lists').innerHTML = 'No urgent tasks to display';
     eTarget.classList.add('active');
   }
 }
 
 function filterUrgentCards() {
-  var listOfUrgentTasks = [];
+  listOfUrgentTasks = [];
   grabUrgentTaskLists(listOfUrgentTasks);
   updateTaskListsBasedOnSearch(listOfUrgentTasks);
   for (var i = 0; i < listOfUrgentTasks.length; i++) {

@@ -135,36 +135,6 @@ function removeNoListsMessage() {
   taskListColumn.querySelector('.no-task-lists').classList.remove('active');
 }
 
-// function addTaskListToDom() {
-//   var checklistHTML = '';
-//   for (var i = 0; i < currentTaskList.tasks.length; i++) {
-//     checklistHTML += `<li class="task-list-item">
-//       <input id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
-//       <label id="${currentTaskList.tasks[i].id}" class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
-//     </li>`;
-//   }
-//
-//   var newTaskList = `<section id="${currentTaskList.id}" class="task-box">
-//     <h3>${currentTaskList.title}</h3>
-//     <ul class="task-list">
-//       ${checklistHTML}
-//     </ul>
-//     <footer>
-//       <button class="urgent-button">
-//         <img src="./assets/urgent.svg" alt="Urgent">
-//         <p>Urgent</p>
-//       </button>
-//       <button class="delete-card" disabled>
-//         <img src="./assets/delete.svg" alt="Delete Task List">
-//         <p>Delete</p>
-//       </button>
-//     </footer>
-//   </section>`;
-//   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
-//   currentTaskList = new ToDoList();
-//   resetMakeTaskList();
-// }
-
 function resetMakeTaskList() {
   taskListTitle.value = '';
   tasksToAddList.innerHTML = '';

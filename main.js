@@ -257,9 +257,8 @@ function deleteTaskCard(event) {
 
 function searchTasks() {
   var searchTerm = searchInput.value.toLowerCase();
-  var taskListsThatMatch = listOfTasks.filter(function(list) {
-    return list.title.toLowerCase().includes(searchTerm);
-  })
+  taskListsThatMatch = determineWhatToSearch(searchTerm);
+
   updateTaskListsBasedOnSearch(taskListsThatMatch);
   for (var i = 0; i < taskListsThatMatch.length; i++) {
     populateCards(taskListsThatMatch[i]);
@@ -274,6 +273,24 @@ function updateTaskListsBasedOnSearch(taskListsThatMatch) {
   toggleListMessage(taskListsThatMatch)
 }
 
+function determineWhatToSearch(searchTerm) {
+  if (urgentFilterButton.classList.contains('active')) {
+    var taskListsThatMatch = listOfTasks.filter(function(list) {
+      console.log('urgent flow');
+      return (list.title.toLowerCase().includes(searchTerm)) && (list.urgent === true);
+    })
+    return taskListsThatMatch;
+    console.log(taskListsThatMatch);
+  } else {
+    var taskListsThatMatch = listOfTasks.filter(function(list) {
+      console.log('normal flow');
+      return list.title.toLowerCase().includes(searchTerm);
+    })
+    console.log(taskListsThatMatch);
+    return taskListsThatMatch;
+  }
+}
+
 function toggleListMessage(taskListsThatMatch) {
   if (taskListsThatMatch.length === 0) {
     displayNoListsInDom();
@@ -284,6 +301,7 @@ function toggleListMessage(taskListsThatMatch) {
 
 function toggleUrgencyFilter(event) {
   var eTarget = event.target;
+  searchInput.value = '';
   if (eTarget.classList.contains('active')) {
     eTarget.classList.remove('active');
     populateIfNotUrgent();

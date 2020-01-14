@@ -3,6 +3,7 @@ var taskListColumn = document.querySelector('.task-list-column');
 var taskListTitle = document.getElementById('taskListTitle');
 var tasksList = document.querySelector('.tasks-list');
 var tasksToAddList = document.querySelector('.tasks-to-add');
+var searchInput = document.querySelector('.search-input');
 var createTaskButton = document.getElementById('#createTask');
 var createTaskListButton = document.getElementById('createTaskList');
 var clearAllButton = document.getElementById('clearAllButton');
@@ -33,6 +34,8 @@ document.addEventListener('keyup', function() {
 window.addEventListener('load', function() {
   pullSavedTaskListsFromLocalStorage();
 });
+
+searchInput.addEventListener('input', searchTasks);
 
 function pullSavedTaskListsFromLocalStorage() {
   var taskListsInLocalStorage = JSON.parse(window.localStorage.getItem('listOfTasks'));
@@ -93,6 +96,8 @@ function populateCards(taskAtHand) {
     </footer>
   </section>`;
   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
+  currentTaskList = new ToDoList();
+  resetMakeTaskList();
 }
 
 function addTask(event) {
@@ -120,7 +125,8 @@ function createTaskList() {
     currentTaskList.title = taskListTitle.value;
     currentTaskList.saveToStorage();
     removeNoListsMessage();
-    addTaskListToDom();
+    // addTaskListToDom();
+    populateCards(currentTaskList);
     validateMakeTaskListForm();
   }
 }
@@ -129,35 +135,35 @@ function removeNoListsMessage() {
   taskListColumn.querySelector('.no-task-lists').classList.remove('active');
 }
 
-function addTaskListToDom() {
-  var checklistHTML = '';
-  for (var i = 0; i < currentTaskList.tasks.length; i++) {
-    checklistHTML += `<li class="task-list-item">
-      <input id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
-      <label id="${currentTaskList.tasks[i].id}" class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
-    </li>`;
-  }
-
-  var newTaskList = `<section id="${currentTaskList.id}" class="task-box">
-    <h3>${currentTaskList.title}</h3>
-    <ul class="task-list">
-      ${checklistHTML}
-    </ul>
-    <footer>
-      <button class="urgent-button">
-        <img src="./assets/urgent.svg" alt="Urgent">
-        <p>Urgent</p>
-      </button>
-      <button class="delete-card" disabled>
-        <img src="./assets/delete.svg" alt="Delete Task List">
-        <p>Delete</p>
-      </button>
-    </footer>
-  </section>`;
-  taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
-  currentTaskList = new ToDoList();
-  resetMakeTaskList();
-}
+// function addTaskListToDom() {
+//   var checklistHTML = '';
+//   for (var i = 0; i < currentTaskList.tasks.length; i++) {
+//     checklistHTML += `<li class="task-list-item">
+//       <input id="${currentTaskList.tasks[i].id}" type="checkbox" name="" value="">
+//       <label id="${currentTaskList.tasks[i].id}" class="task" for="${currentTaskList.tasks[i].id}">${currentTaskList.tasks[i].description}</label>
+//     </li>`;
+//   }
+//
+//   var newTaskList = `<section id="${currentTaskList.id}" class="task-box">
+//     <h3>${currentTaskList.title}</h3>
+//     <ul class="task-list">
+//       ${checklistHTML}
+//     </ul>
+//     <footer>
+//       <button class="urgent-button">
+//         <img src="./assets/urgent.svg" alt="Urgent">
+//         <p>Urgent</p>
+//       </button>
+//       <button class="delete-card" disabled>
+//         <img src="./assets/delete.svg" alt="Delete Task List">
+//         <p>Delete</p>
+//       </button>
+//     </footer>
+//   </section>`;
+//   taskListColumn.insertAdjacentHTML('afterbegin', newTaskList);
+//   currentTaskList = new ToDoList();
+//   resetMakeTaskList();
+// }
 
 function resetMakeTaskList() {
   taskListTitle.value = '';
@@ -264,5 +270,32 @@ function deleteTaskCard(event) {
     if (listOfTasks.length === 0) {
       displayNoListsInDom();
     }
+  }
+}
+
+function searchTasks() {
+  var searchTerm = searchInput.value.toLowerCase();
+  var taskListsThatMatch = listOfTasks.filter(function(list) {
+    return list.title.toLowerCase().includes(searchTerm);
+  })
+  updateTaskListsBasedOnSearch(taskListsThatMatch);
+  for (var i = 0; i < taskListsThatMatch.length; i++) {
+    populateCards(taskListsThatMatch[i]);
+  }
+}
+
+function updateTaskListsBasedOnSearch(taskListsThatMatch) {
+  var listsInColumn = taskListColumn.querySelectorAll('.task-box');
+  for (var i = 0; i < listsInColumn.length; i++) {
+    listsInColumn[i].remove();
+  }
+  toggleListMessage(taskListsThatMatch)
+}
+
+function toggleListMessage(taskListsThatMatch) {
+  if (taskListsThatMatch.length === 0) {
+    displayNoListsInDom();
+  } else {
+    taskListColumn.querySelector('.no-task-lists').classList.remove('active');
   }
 }

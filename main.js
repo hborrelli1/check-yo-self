@@ -83,7 +83,9 @@ function populateCards(taskAtHand) {
   taskAtHand.urgent === true ? isUrgent = 'js-urgent' : isUrgent = '';
   var urgentIcon = toggleUrgentIcon(taskAtHand);
 
-  var allTasksChecked = (task) => task.checked === true;
+  var allTasksChecked = function(task) {
+    return task.checked;
+  }
   var isAbleToDelete = taskAtHand.tasks.every(allTasksChecked) === true;
   isAbleToDelete === true ? isAbleToDelete = '' : isAbleToDelete = 'disabled';
 

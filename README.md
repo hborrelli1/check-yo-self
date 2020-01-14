@@ -14,3 +14,6 @@ Solidify and demonstrate your understanding of:
 - Iterate through/filter DOM elements using for loops
 - Understand the difference between the data model and how the data is displayed on the DOM
 - Ability to match/recreate a UI and create a great UX
+
+## Screenshots
+![App Screenshot](./assets/app-screenshot.png)
